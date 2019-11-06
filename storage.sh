@@ -1,9 +1,6 @@
 #!/bin/sh
 
-DEBUG=1
-
-rm BASE
-
+DEBUG=0
 
 debug() {
     if [[ DEBUG -eq 1 ]]; then
@@ -124,22 +121,26 @@ export_into_json() {
 
 }
 
-add_base "test"
-add_base "test2"
+case "$1" in 
+"ADD_BASE")
+    add_base $2
+    ;;
+"DEL_BASE")
+    del_base $2
+    ;;
+"ADD_COL")
+    add_column $2 $3
+    ;;
+"DEL_COL")
+    del_column $2 $3
+    ;;
+"APPEND_LINE")
+    shift
+    append_line $@
+    ;;
+"GET_COLS_NAMES")
+    get_column_names $2
+    echo $RESULT
+    ;;
+esac
 
-add_column "name" "test"
-add_column "name2" "test"
-
-add_column "name" "test2"
-add_column "name2" "test2"
-
-del_column "name" "test"
-
-
-
-append_line 1 test
-append_line column_1 column_2 test2
-
-
-get_column_names test2
-echo $RESULT
