@@ -18,3 +18,5 @@ source storage.sh APPEND_LINE "column_1" "column_2" "test2"
 
 
 source storage.sh GET_COLS_NAMES test2
+
+source storage.sh GET_LINE_NUM test2

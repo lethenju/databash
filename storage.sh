@@ -39,10 +39,24 @@ get_number_columns() {
     RESULT=$(sed -n '/STARTB='$1';/,/ENDB/p' BASE | wc -l )
     RESULT=$((RESULT-2))
 }
+get_number_lines() {
+    debug "get number of lines in base $1"
+    sed -n '/STARTB=test2;/,/ENDB;/p' BASE | sed -n 2p > .file
+    RESULT=$(awk -F, '{print NF-1}' .file)
+    rm .file
+}
+update_value_in_column() {
+    debug "update value id $1 by $2 in column $3 of base $4"
 
-update_value() {
-    debug "change value $1 $2 $3 $4"
+}
 
+append_value_in_column() {
+    debug "append value $1 in column $2 of base $3"
+    sed -i '/STARTB='$3';/,/ENDB;/{/'$2':/{s/$/'$1',/g}}' BASE
+}
+delete_value_in_column() {
+    debug "delete value id $1 in column $2 of base $3"
+    
 }
 
 get_name_of_column_id() {
@@ -50,11 +64,6 @@ get_name_of_column_id() {
     ID=$1
     RESULT=$(sed -n '/STARTB='$2';/,/ENDB;/p' BASE | sed -n $((ID+2))p | sed 's/:.*//g')
     debug "result = $RESULT"
-}
-
-append_value_in_column() {
-    debug "append value $1 in column $2 of base $3"
-    sed -i '/STARTB='$3';/,/ENDB;/{/'$2':/{s/$/'$1';/g}}' BASE
 }
 
 append_line() {
@@ -82,14 +91,20 @@ append_line() {
     done
 }
 
-select_lines_where_value_is_eq() {
+#delete line with id
+delete_line() {
+    debug "Delete line with ID $1 in base $2"
+
+}
+
+
+#return ID of the lines 
+#format : $RESULT=1;2;3;8
+get_lines_where_value_is_eq() {
     debug "Select lines where column $2 is equal to $1, in base $3"
 }
 
 
-select_lines_where_value_is_neq() {
-    debug "Select lines where column $2 is not equal to $1, in base $3"
-}
 
 print_base() {
     debug "print base $1"
@@ -140,6 +155,14 @@ case "$1" in
     ;;
 "GET_COLS_NAMES")
     get_column_names $2
+    echo $RESULT
+    ;;
+"GET_COLS_NUM")
+    get_number_columns $2
+    echo $RESULT
+    ;;
+"GET_LINE_NUM")
+    get_number_lines $2
     echo $RESULT
     ;;
 esac
