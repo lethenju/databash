@@ -1,6 +1,6 @@
 #!/bin/sh
 
-DEBUG=0
+DEBUG=1
 
 debug() {
     if [[ DEBUG -eq 1 ]]; then
@@ -41,12 +41,39 @@ get_number_columns() {
 }
 get_number_lines() {
     debug "get number of lines in base $1"
-    sed -n '/STARTB=test2;/,/ENDB;/p' BASE | sed -n 2p > .file
-    RESULT=$(awk -F, '{print NF-1}' .file)
+    sed -n '/STARTB='$1';/,/ENDB;/p' BASE | sed -n 2p > .file
+    RESULT=$(awk -F "," '{print NF-1}' .file)
     rm .file
 }
+
+# Get the position in chars of an id from a column line.
+# For internal use only!
+get_position_id() {
+    debug "position id for id $1 of column $2 of base $3"
+    echo $(sed -n '/STARTB='$3';/,/ENDB;/{/'$2':/p}' BASE) > .file
+    echo $(awk -F ":" '{print $2}' .file) > .file
+    POS=$(echo -n $2 | wc -c) # Counting size of column name
+    POS=$((POS+1)) # for the ":"
+    ID=$1
+    for ((i=1 ; i < $((ID+1)); i++)) {
+        VAL=$(awk -v var='$i' -F  "," '{print $((i+1))}' .file)
+        SIZE=$(echo -n $VAL | wc -c)
+        POS=$((POS + SIZE + 1 ))
+    }
+    RESULT=$POS
+    rm .file
+}
+
 update_value_in_column() {
     debug "update value id $1 by $2 in column $3 of base $4"
+    get_position_id $1 $3 $4
+    POSITION_ID=$RESULT
+
+    get_number_lines $4
+    debug "Number of lines : $RESULT"
+    get_position_id $RESULT $3 $4
+    LAST_POSITION_ID=$RESULT
+    debug "POSITION_ID : $POSITION_ID LAST_POSITION_ID : $LAST_POSITION_ID"
 
 }
 
@@ -164,6 +191,9 @@ case "$1" in
 "GET_LINE_NUM")
     get_number_lines $2
     echo $RESULT
+    ;;
+"UPDATE_VALUE")
+    update_value_in_column $2 $3 $4 $5
     ;;
 esac
 
