@@ -13,32 +13,39 @@ if [[ ! -e BASE ]]; then
     echo "#BASE_FILE#" > BASE
 fi
 
-
+# Adds a base given in parameter
 add_base() {
     debug "add base $1"
     sed -i '$ a\STARTB='$1';\nENDB;' BASE;
 }
 
+# Deletes the base fiven in parameer
 del_base() {
     debug "remove base $1"
     sed -i '/STARTB='$1';/,/ENDB;/d' BASE;
 }
 
+# Adds column to base
 add_column() {
     debug "add column $1 to base $2"
     sed -i '/STARTB='$2';/,/ENDB;/{s/ENDB;/'$1':\nENDB;/g}' BASE
 }
 
+# Deletes a column of a base
 del_column() {
     debug "del column $1 to base $2"
     sed -i '/STARTB='$2';/,/ENDB;/{/'$1':/d}' BASE
 
 }
+
+# Returns the number of columns of a base in the result var
 get_number_columns() {
     debug "get number of columns in base $1"
     RESULT=$(sed -n '/STARTB='$1';/,/ENDB/p' BASE | wc -l )
     RESULT=$((RESULT-2))
 }
+
+# Returns the number of lines of a base in the result var
 get_number_lines() {
     debug "get number of lines in base $1"
     sed -n '/STARTB='$1';/,/ENDB;/p' BASE | sed -n 2p > .file
@@ -65,6 +72,11 @@ get_position_id() {
 }
 
 update_value_in_column() {
+    # We could use that ?
+    #sed -i '/STARTB=test2;/,/ENDB;/{/name:/{s/\([a-Z0-9_]*\)\:\([a-Z0-9_]*\),/\1:88888\,/g}}' BASE 
+    # Sed doesnt support non capturing groups, so we cannot use :
+    # this regex : (?:.*?(\,)){1}.*?([_.0-9a-zA-Z]+)
+
     debug "update value id $1 by $2 in column $3 of base $4"
     get_position_id $1 $3 $4
     POSITION_ID=$RESULT
@@ -75,17 +87,28 @@ update_value_in_column() {
     LAST_POSITION_ID=$RESULT
     debug "POSITION_ID : $POSITION_ID LAST_POSITION_ID : $LAST_POSITION_ID"
 
+    # How to change a file with the position ID ?
+
+    # TODO Find a solution
+
 }
 
+# Appends a value in a column. 
+# For internal use : need to appends value in all columns
+# to keep the same number of lines
 append_value_in_column() {
     debug "append value $1 in column $2 of base $3"
     sed -i '/STARTB='$3';/,/ENDB;/{/'$2':/{s/$/'$1',/g}}' BASE
 }
+
+# Deletes a value from a column.
+# For internal use : see append_value_in_column
 delete_value_in_column() {
     debug "delete value id $1 in column $2 of base $3"
     
 }
 
+# Gets name of a column of a base by its ID
 get_name_of_column_id() {
     debug "return name of column id $1 in base $2"
     ID=$1
@@ -93,6 +116,7 @@ get_name_of_column_id() {
     debug "result = $RESULT"
 }
 
+# Appends a line in a base 
 append_line() {
     NUM_ARGS=$#
     NUM_COLS_GIVEN=$((NUM_ARGS-1))
@@ -153,11 +177,13 @@ get_column_names() {
     RESULT=${LIST_COLUMN_NAMES#;} #Remove first ';' that is here because of the first loop
 }
 
+# To implement
 get_column() {
     debug "get column $1 of base $2"
 
 }
 
+# To implement
 export_into_json() {
     debug "exporting in json base $1"
 
