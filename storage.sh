@@ -1,4 +1,7 @@
 #!/bin/sh
+# @Author : Julien LE THENO
+# @Date : 07/11/2019
+# @Version : 0.1
 
 DEBUG=1
 
