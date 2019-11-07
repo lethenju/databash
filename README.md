@@ -40,6 +40,16 @@ It will create a small database in the `BASE` file and query information from it
  source storage.sh APPEND_LINE "3" "Hermione" "Student" "mydatabase"
 ```
 
+Your `BASE` file now looks like that : 
+```
+#BASE_FILE#
+STARTB=mydatabase;
+ID:1,2,3,
+name:Harry,Ron,Hermione,
+status:Student,Student,Student,
+ENDB;
+```
+
 #### Read
 
 ```sh 
