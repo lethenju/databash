@@ -6,7 +6,7 @@ This is just a project, as for now only some APIs are implemented. They lack uni
 
 ## What for ?
 
-You want a simple CRUD system that is not less heavier than 300 lines of shell code ?
+You want a simple CRUD system that is less heavier than 300 lines of shell code ?
 
 No nodeJS, no Python, no Ruby, no dependency, not even a compiled binary ?
 
