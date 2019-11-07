@@ -1,7 +1,7 @@
 # databash
 Simple database solution with Linux bash 
 
-/!\ WARNING /!\
+/!\ WARNING /!\\
 This is just a project, as for now only some APIs are implemented. They lack unitary and verification tests and error handling. You shouldnt use this code for your application
 
 ## What for ?
