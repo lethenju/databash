@@ -24,6 +24,7 @@ sanitize_input() {
     sed -i 's/[\,\$\'"'"'\\\,\.\/\:\;"]//g' .file
     result="$(< .file)"
     echo $result
+    rm .file
 }
 
 
