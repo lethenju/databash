@@ -1,7 +1,7 @@
 #!/bin/sh
 
 rm BASE
-export DEBUG=1
+export DEBUG=0
  # Add a table named "Users"
  source storage.sh ADD_TABLE "Users"
  
@@ -18,10 +18,13 @@ export DEBUG=1
  source storage.sh APPEND_LINE "Hermione" "Student" "Users"
  source storage.sh APPEND_LINE "Hagrid" "Student" "Users"
 
-
- source storage.sh GET_VALUE "4" "name" "Users"
- source storage.sh GET_VALUE "4" "status" "Users"
-
  # Mh Hagrid is not a student.. Lets correct that
 
  source storage.sh UPDATE_VALUE "4" "Professor" "status" "Users"
+
+# Hagrid is no longer in poudlard :'(
+ source storage.sh DEL_LINE "4" "Users"
+
+# Print table
+ source storage.sh PRINT_TABLE "Users"
+

@@ -78,7 +78,7 @@ get_position_id() {
 get_value_from_id() {
     debug "get value of line $1 of column $2 of table $3"
     echo $(sed -n '/STARTB='$3';/,/ENDB;/{/'$2':/p}' BASE) > .file
-    result=$(cat .file | perl -pe "s/(?:.*?[,:]){$1}(.*?)\,/\1,/g" | perl -pe "s/,([^\,]*,$)//g")
+    result=$(cat .file | perl -pe "s/(?:.*?[,:]){$1}(.*?)\,/\1,/g" | perl -pe "s/,.*$//g")
     rm .file
 }
 
@@ -146,7 +146,7 @@ append_line() {
     num_cols_table=$result
     if [[ $num_cols_given -ne $num_cols_table ]]; then
         echo "ERR : Wrong number of columns : given $num_cols_given , need $num_cols_table"
-        return 1
+        return 0
     fi
 
     debug "append line in $table_name"
@@ -156,7 +156,7 @@ append_line() {
         col_name=$result
         append_value_in_column $var $col_name $table_name
         if [[ $i -eq $((num_cols_table - 1)) ]]; then # ok
-            return 0
+            return 0;
         fi
 
         i=$((i+1));
@@ -188,6 +188,26 @@ get_lines_where_value_is_eq() {
 
 print_table() {
     debug "print table $1"
+    get_number_columns $1
+    number_columns=$result
+    get_number_lines $1
+    number_lines=$result
+    get_column_names $1
+    column_names=$result  
+    echo ":  $column_names"
+    for ((i_print_table = 1; i_print_table <= $number_lines ; i_print_table++)); do
+        line="-  "
+        for ((j_print_table = 0; j_print_table < $number_columns ; j_print_table++)); do
+            get_name_of_column_id $j_print_table $1
+            name_of_column=$result
+            get_value_from_id $i_print_table $name_of_column $1            
+            line="$line $result"
+        done
+        # Todo align the names
+        echo $line
+    done
+
+
 
 }
 
@@ -257,6 +277,9 @@ case "$1" in
     ;;
 "DEL_LINE")
     delete_line $2 $3
+    ;;
+"PRINT_TABLE")
+    print_table $2
     ;;
 esac
 
