@@ -11,7 +11,7 @@ You want a simple CRUD system that is less heavier than 300 lines of shell code 
 
 No nodeJS, no Python, no Ruby, no dependency, not even a compiled binary ?
 
-Here you go : this simple script based on `sed` to give you different APIs to manage your data just like any CRUD system.
+Here you go : this simple script based on `sed` and `perl` give you different APIs to manage your data just like any CRUD system.
 
 ## Usage
 
