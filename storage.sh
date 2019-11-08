@@ -1,4 +1,7 @@
 #!/bin/bash
+# @Author : Julien LE THENO
+# @Date : 08/11/2019
+# @Version : 1.0
 
 
 if [[ ! -e BASE ]]; then
