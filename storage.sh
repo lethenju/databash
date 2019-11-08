@@ -1,7 +1,5 @@
 #!/bin/bash
 
-DEBUG=1
-
 debug() {
     if [[ DEBUG -eq 1 ]]; then
         echo $1
@@ -71,7 +69,7 @@ get_position_id() {
     rm .file
 }
 
-## Get a value of a field from a column line
+# Get a value of a field from a column line
 get_value_from_id() {
     debug "get value of line $1 of column $2 of base $3"
     echo $(sed -n '/STARTB='$3';/,/ENDB;/{/'$2':/p}' BASE) > .file
@@ -79,26 +77,24 @@ get_value_from_id() {
     rm .file
 }
 
+# Update a value in the database
 update_value_in_column() {
-    # We could use that ?
-    #sed -i '/STARTB=test2;/,/ENDB;/{/name:/{s/\([a-Z0-9_]*\)\:\([a-Z0-9_]*\),/\1:88888\,/g}}' BASE 
-    # Sed doesnt support non capturing groups, so we cannot use :
-    # this regex : (?:.*?(\,)){1}.*?([_.0-9a-zA-Z]+)
-
+    id=$1
+    id=$((id-1))
     debug "update value id $1 by $2 in column $3 of base $4"
-    get_position_id $1 $3 $4
+    get_position_id $id $3 $4
     position_id=$result
 
-    get_number_lines $4
-    debug "Number of lines : $result"
-    get_position_id $result $3 $4
-    last_position_id=$result
-    debug "position_id : $position_id last_position_id : $last_position_id"
+    debug "position_id : $position_id "
 
-    # How to change a file with the position ID ?
+    # Get column in a different file
+    echo $(sed -n '/STARTB='$4';/,/ENDB;/{/'$3':/p}' BASE) > .file
+    non_modified_line=$(cat .file)
+    modified_line=$(cat .file | perl -pe "s/(^.{$position_id}).*?,(.*$)/\1$2,\2/g")
 
-    # TODO Find a solution
-
+    debug "Modified line = $modified_line"
+    sed -i "s/$non_modified_line/$modified_line/g" BASE
+    rm .file
 }
 
 # Appends a value in a column. 
