@@ -39,6 +39,8 @@ It will create a small database in the `BASE` file and query information from it
  source storage.sh APPEND_LINE "1" "Harry" "Student" "mydatabase"
  source storage.sh APPEND_LINE "2" "Ron" "Student" "mydatabase"
  source storage.sh APPEND_LINE "3" "Hermione" "Student" "mydatabase"
+ source storage.sh APPEND_LINE "Hagrid" "Student" "mydatabase"
+
 ```
 
 Your `BASE` file now looks like that : 
@@ -46,8 +48,8 @@ Your `BASE` file now looks like that :
 #BASE_FILE#
 STARTB=mydatabase;
 ID:1,2,3,
-name:Harry,Ron,Hermione,
-status:Student,Student,Student,
+name:Harry,Ron,Hermione,Hagrid,
+status:Student,Student,Student,Student,
 ENDB;
 ```
 
@@ -69,7 +71,13 @@ ENDB;
 ```
 #### Update 
 
-TODO (Nothing implemented for now)
+```
+
+ # Mh Hagrid is not a student.. Lets correct that. 
+                 -> Takes the ID, the new value, the column to change, and the table
+ source storage.sh UPDATE_VALUE "4" "Professor" "status" "mydatabase"
+
+```
 
 #### Delete
 
