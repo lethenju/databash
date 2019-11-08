@@ -108,8 +108,20 @@ append_value_in_column() {
 # Deletes a value from a column.
 # For internal use : see append_value_in_column
 delete_value_in_column() {
-    debug "delete value id $1 in column $2 of table $3"
-    
+    id=$1
+    id=$((id-1))
+    debug "deletes value id $1 in column $2 of table $3"
+    get_position_id $id $2 $3
+    position_id=$result
+
+    debug "position_id : $position_id "
+
+    # Get column in a different file
+    echo $(sed -n '/STARTB='$3';/,/ENDB;/{/'$2':/p}' BASE) > .file
+    non_modified_line=$(cat .file)
+    modified_line=$(cat .file | perl -pe "s/(^.{$position_id}).*?,(.*$)/\1\2/g")
+    sed -i "s/$non_modified_line/$modified_line/g" BASE
+    #rm .file
 }
 
 # Gets name of a column of a table by its ID
@@ -149,6 +161,14 @@ append_line() {
 #delete line with id
 delete_line() {
     debug "Delete line with ID $1 in table $2"
+    get_number_columns $2
+    number_columns=$result
+    debug "Number of col = $number_columns"
+    for ((i_delete_line=0 ; i_delete_line < $number_columns; i_delete_line++)); do
+        get_name_of_column_id $i_delete_line $2
+        col_name=$result
+        delete_value_in_column $1 $col_name $2
+    done
 
 }
 
@@ -229,6 +249,9 @@ case "$1" in
     ;;
 "UPDATE_VALUE")
     update_value_in_column $2 $3 $4 $5
+    ;;
+"DEL_LINE")
+    delete_line $2 $3
     ;;
 esac
 
