@@ -74,7 +74,7 @@ ENDB;
 ```sh
  # Mh Hagrid is not a student.. Lets correct that. 
  #    -> Takes the ID, the new value, the column to change, and the table
- source storage.sh UPDATE_VALUE "4" "Professor" "status" "Users"
+ source storage.sh SET_VALUE "4" "Professor" "status" "Users"
 
 ```
 
