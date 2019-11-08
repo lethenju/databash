@@ -1,10 +1,6 @@
 # databash
 Simple database solution with Linux bash 
 
-/!\ WARNING /!\\
-
-This code lacks unitary tests, verification tests and error handling. You shouldnt use this code for your application yet.
-
 ## What for ?
 
 You want a simple CRUD system that is less heavier than 300 lines of shell code ?
