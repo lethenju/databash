@@ -61,8 +61,13 @@ get_position_id() {
     pos=$((pos+1)) # for the ":"
     ID=$1
     for ((i=1 ; i < $((ID+1)); i++)) {
+        #get the value for i in val
         val=$(awk -v var='$i' -F  "," '{print $((i+1))}' .file)
+        # Remove the value from the .file
+        echo $(cat .file | perl -pe "s/(?:^.*?,)(.*)/\1/g") > .file
+        # count the number of char of val
         size=$(echo -n $val | wc -c)
+        # add the size of val to pos + the comma
         pos=$((pos + size + 1 ))
     }
     result=$pos
