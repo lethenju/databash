@@ -1,26 +1,41 @@
 #!/bin/bash
 
-debug() {
-    if [[ DEBUG -eq 1 ]]; then
-        echo $1
-    fi
-}
 
 if [[ ! -e BASE ]]; then
     echo "Base does not exist, write it";
     echo "#BASE_FILE#" > BASE
 fi
 
+
+debug() {
+    if [[ DEBUG -eq 1 ]]; then
+        echo $1
+    fi
+}
+
+# Sanitizes input
+# Databash doesnt handle following special characters : "'\$,:
+# This function will clean those by simply removing them
+sanitize_input() {
+    echo $@ > .file
+    sed -i 's/[\,\$\'"'"'\\\,\.\/\:\;"]//g' .file
+    result="$(< .file)"
+    echo $result
+}
+
+
 # Adds a table given in parameter
 add_table() {
     debug "add table $1"
     sed -i '$ a\STARTB='$1';\nENDB;' BASE;
+    return 0
 }
 
-# Deletes the table fiven in parameer
+# Deletes the table given in parameer
 del_table() {
     debug "remove table $1"
     sed -i '/STARTB='$1';/,/ENDB;/d' BASE;
+    return 0 # We wont check if the table exists. Nothing happens if it doesnt
 }
 
 # Adds column to table
@@ -239,47 +254,71 @@ export_into_json() {
 
 }
 
+
 case "$1" in 
 "ADD_TABLE")
-    add_table $2
+    shift
+    sanitize_input $@
+    add_table $result
     ;;
 "DEL_TABLE")
-    del_table $2
+    shift
+    sanitize_input $@
+    del_table $result
     ;;
 "ADD_COL")
-    add_column $2 $3
+    shift
+    sanitize_input $@
+    add_column $result
     ;;
 "DEL_COL")
-    del_column $2 $3
+    shift
+    sanitize_input $@
+    del_column $result
     ;;
 "APPEND_LINE")
     shift
-    append_line $@
+    sanitize_input $@
+    append_line $result
     ;;
 "GET_COLS_NAMES")
-    get_column_names $2
+    shift
+    sanitize_input $@
+    get_column_names $result
     echo $result
     ;;
 "GET_COLS_NUM")
-    get_number_columns $2
+    shift
+    sanitize_input $@
+    get_number_columns $result
     echo $result
     ;;
 "GET_LINE_NUM")
-    get_number_lines $2
+    shift
+    sanitize_input $@
+    get_number_lines $result
     echo $result
     ;;
 "GET_VALUE")
-    get_value_from_id $2 $3 $4
+    shift
+    sanitize_input $@
+    get_value_from_id $result
     echo $result
     ;;
 "SET_VALUE")
-    set_value_in_column $2 $3 $4 $5
+    shift
+    sanitize_input $@
+    set_value_in_column $result
     ;;
 "DEL_LINE")
-    delete_line $2 $3
+    shift
+    sanitize_input $@
+    delete_line $result
     ;;
 "PRINT_TABLE")
-    print_table $2
+    shift
+    sanitize_input $@
+    print_table $result
     ;;
 esac
 
