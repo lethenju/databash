@@ -2,8 +2,7 @@
 Simple database solution with Linux bash 
 
 /!\ WARNING /!\\
-
-This is just a project, as for now only some APIs are implemented. They lack unitary and verification tests and error handling. You shouldnt use this code for your application
+This code lacks unitary tests, verification tests and error handling. You shouldnt use this code for your application yet.
 
 ## What for ?
 
