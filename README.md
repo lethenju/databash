@@ -62,10 +62,11 @@ ENDB;
  
  # Print the number of lines created in the database
  source storage.sh GET_LINE_NUM "test2"
+ 
+ # Select the second value for the column name in the database 
+ source storage.sh GET_VALUE "2" "name" "mydatabase"
+ 
 ```
-
-TODO : Get value of column for id 
-
 #### Update 
 
 TODO (Nothing implemented for now)
