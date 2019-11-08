@@ -13,13 +13,13 @@ No nodeJS, no Python, no Ruby, no dependency, not even a compiled binary ?
 
 Here you go : this simple script based on `sed` to give you different APIs to manage your data just like any CRUD system.
 
-### Usage
+## Usage
 
 You can see the test.sh script to see how the script is used.
 
 It will create a small table in the `BASE` file and query information from it
 
-#### Create 
+### Create 
 
 ```sh
  # Add a table named "Users"
@@ -50,7 +50,7 @@ status:Student,Student,Student,Student,
 ENDB;
 ```
 
-#### Read
+### Read
 
 ```sh 
  # Print the number of columns created in the database
@@ -62,11 +62,14 @@ ENDB;
  # Print the number of lines created in the database
  source storage.sh GET_LINE_NUM "test2" "Users"
  
- # Select the second value for the column name in the database 
+ # Print the second value for the column name in the database 
  source storage.sh GET_VALUE "2" "name" "Users"
  
+ # Print table
+ source storage.sh PRINT_TABLE "Users"
+ 
 ```
-#### Update 
+### Update 
 
 ```sh
  # Mh Hagrid is not a student.. Lets correct that. 
@@ -75,9 +78,13 @@ ENDB;
 
 ```
 
-#### Delete
+### Delete
 
 ```sh
+ # Deletes a line
+ # Hagrid is no longer in poudlard :'(
+ source storage.sh DEL_LINE "4" "Users"
+
  # Deletes a column named "ID" in the table
  source storage.sh DEL_COL "ID" "Users"
  
