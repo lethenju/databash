@@ -146,7 +146,7 @@ append_line() {
     num_cols_table=$result
     if [[ $num_cols_given -ne $num_cols_table ]]; then
         echo "ERR : Wrong number of columns : given $num_cols_given , need $num_cols_table"
-        return 0
+        return 1
     fi
 
     debug "append line in $table_name"
@@ -156,7 +156,7 @@ append_line() {
         col_name=$result
         append_value_in_column $var $col_name $table_name
         if [[ $i -eq $((num_cols_table - 1)) ]]; then # ok
-            return 1;
+            return 0
         fi
 
         i=$((i+1));
