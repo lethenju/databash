@@ -1,7 +1,4 @@
 #!/bin/bash
-# @Author : Julien LE THENO
-# @Date : 07/11/2019
-# @Version : 0.2
 
 debug() {
     if [[ DEBUG -eq 1 ]]; then
@@ -86,7 +83,7 @@ get_value_from_id() {
 }
 
 # Update a value in the datatable
-update_value_in_column() {
+set_value_in_column() {
     id=$1
     id=$((id-1))
     debug "update value id $1 by $2 in column $3 of table $4"
@@ -275,8 +272,8 @@ case "$1" in
     get_value_from_id $2 $3 $4
     echo $result
     ;;
-"UPDATE_VALUE")
-    update_value_in_column $2 $3 $4 $5
+"SET_VALUE")
+    set_value_in_column $2 $3 $4 $5
     ;;
 "DEL_LINE")
     delete_line $2 $3

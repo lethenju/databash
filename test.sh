@@ -20,7 +20,7 @@ export DEBUG=0
 
  # Mh Hagrid is not a student.. Lets correct that
 
- source storage.sh UPDATE_VALUE "4" "Professor" "status" "Users"
+ source storage.sh SET_VALUE "4" "Professor" "status" "Users"
 
 # Hagrid is no longer in poudlard :'(
  source storage.sh DEL_LINE "4" "Users"
