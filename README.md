@@ -25,9 +25,6 @@ It will create a small table in the `BASE` file and query information from it
  # Add a table named "Users"
  source storage.sh ADD_TABLE "Users"
  
- # Add a column named "ID" in the table
- source storage.sh ADD_COL "ID" "Users"
- 
  # Add a column named "name" in the table
  source storage.sh ADD_COL "name" "Users"
  
@@ -36,9 +33,9 @@ It will create a small table in the `BASE` file and query information from it
  
  # Insert some data : parameters are simply in order of the columns created, 
  # ended with the name of the database
- source storage.sh APPEND_LINE "1" "Harry" "Student" "Users"
- source storage.sh APPEND_LINE "2" "Ron" "Student" "Users"
- source storage.sh APPEND_LINE "3" "Hermione" "Student" "Users"
+ source storage.sh APPEND_LINE "Harry" "Student" "Users"
+ source storage.sh APPEND_LINE "Ron" "Student" "Users"
+ source storage.sh APPEND_LINE "Hermione" "Student" "Users"
  source storage.sh APPEND_LINE "Hagrid" "Student" "Users"
 
 ```
