@@ -1,4 +1,7 @@
 #!/bin/bash
+# @Author : Julien LE THENO
+# @Date : 07/11/2019
+# @Version : 0.2
 
 debug() {
     if [[ DEBUG -eq 1 ]]; then
