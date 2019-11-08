@@ -3,7 +3,7 @@ Simple database solution with Linux bash
 
 ## What for ?
 
-You want a simple CRUD system that is less heavier than 300 lines of shell code ?
+You want a simple CRUD system that is lighter than 400 lines of shell code ?
 
 No nodeJS, no Python, no Ruby, no dependency, not even a compiled binary ?
 
