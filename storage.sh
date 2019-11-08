@@ -1,7 +1,4 @@
-#!/bin/sh
-# @Author : Julien LE THENO
-# @Date : 07/11/2019
-# @Version : 0.1
+#!/bin/bash
 
 DEBUG=1
 
@@ -44,15 +41,15 @@ del_column() {
 # Returns the number of columns of a base in the result var
 get_number_columns() {
     debug "get number of columns in base $1"
-    RESULT=$(sed -n '/STARTB='$1';/,/ENDB/p' BASE | wc -l )
-    RESULT=$((RESULT-2))
+    result=$(sed -n '/STARTB='$1';/,/ENDB/p' BASE | wc -l )
+    result=$((result-2))
 }
 
 # Returns the number of lines of a base in the result var
 get_number_lines() {
     debug "get number of lines in base $1"
     sed -n '/STARTB='$1';/,/ENDB;/p' BASE | sed -n 2p > .file
-    RESULT=$(awk -F "," '{print NF-1}' .file)
+    result=$(awk -F "," '{print NF-1}' .file)
     rm .file
 }
 
@@ -62,15 +59,23 @@ get_position_id() {
     debug "position id for id $1 of column $2 of base $3"
     echo $(sed -n '/STARTB='$3';/,/ENDB;/{/'$2':/p}' BASE) > .file
     echo $(awk -F ":" '{print $2}' .file) > .file
-    POS=$(echo -n $2 | wc -c) # Counting size of column name
-    POS=$((POS+1)) # for the ":"
+    pos=$(echo -n $2 | wc -c) # Counting size of column name
+    pos=$((pos+1)) # for the ":"
     ID=$1
     for ((i=1 ; i < $((ID+1)); i++)) {
-        VAL=$(awk -v var='$i' -F  "," '{print $((i+1))}' .file)
-        SIZE=$(echo -n $VAL | wc -c)
-        POS=$((POS + SIZE + 1 ))
+        val=$(awk -v var='$i' -F  "," '{print $((i+1))}' .file)
+        size=$(echo -n $val | wc -c)
+        pos=$((pos + size + 1 ))
     }
-    RESULT=$POS
+    result=$pos
+    rm .file
+}
+
+## Get a value of a field from a column line
+get_value_from_id() {
+    debug "get value of line $1 of column $2 of base $3"
+    echo $(sed -n '/STARTB='$3';/,/ENDB;/{/'$2':/p}' BASE) > .file
+    result=$(cat .file | perl -pe "s/(?:.*?[,:]){$1}(.*?)\,/\1,/g" | perl -pe "s/,([^\,]*,$)//g")
     rm .file
 }
 
@@ -82,13 +87,13 @@ update_value_in_column() {
 
     debug "update value id $1 by $2 in column $3 of base $4"
     get_position_id $1 $3 $4
-    POSITION_ID=$RESULT
+    position_id=$result
 
     get_number_lines $4
-    debug "Number of lines : $RESULT"
-    get_position_id $RESULT $3 $4
-    LAST_POSITION_ID=$RESULT
-    debug "POSITION_ID : $POSITION_ID LAST_POSITION_ID : $LAST_POSITION_ID"
+    debug "Number of lines : $result"
+    get_position_id $result $3 $4
+    last_position_id=$result
+    debug "position_id : $position_id last_position_id : $last_position_id"
 
     # How to change a file with the position ID ?
 
@@ -115,29 +120,29 @@ delete_value_in_column() {
 get_name_of_column_id() {
     debug "return name of column id $1 in base $2"
     ID=$1
-    RESULT=$(sed -n '/STARTB='$2';/,/ENDB;/p' BASE | sed -n $((ID+2))p | sed 's/:.*//g')
-    debug "result = $RESULT"
+    result=$(sed -n '/STARTB='$2';/,/ENDB;/p' BASE | sed -n $((ID+2))p | sed 's/:.*//g')
+    debug "result = $result"
 }
 
 # Appends a line in a base 
 append_line() {
-    NUM_ARGS=$#
-    NUM_COLS_GIVEN=$((NUM_ARGS-1))
-    BASE_NAME="${@: -1}"
-    get_number_columns $BASE_NAME 
-    NUM_COLS_BASE=$RESULT
-    if [[ $NUM_COLS_GIVEN -ne $NUM_COLS_BASE ]]; then
-        echo "ERR : Wrong number of columns : given $NUM_COLS_GIVEN , need $NUM_COLS_BASE"
+    num_args=$#
+    num_cols_given=$((num_args-1))
+    base_name="${@: -1}"
+    get_number_columns $base_name 
+    num_cols_base=$result
+    if [[ $num_cols_given -ne $num_cols_base ]]; then
+        echo "ERR : Wrong number of columns : given $num_cols_given , need $num_cols_base"
         return 0
     fi
 
-    debug "append line in $BASE_NAME"
+    debug "append line in $base_name"
     i=0;
     for var in "$@"; do
-        get_name_of_column_id $i $BASE_NAME
-        COL_NAME=$RESULT
-        append_value_in_column $var $COL_NAME $BASE_NAME
-        if [[ $i -eq $((NUM_COLS_BASE - 1)) ]]; then # ok
+        get_name_of_column_id $i $base_name
+        col_name=$result
+        append_value_in_column $var $col_name $base_name
+        if [[ $i -eq $((num_cols_base - 1)) ]]; then # ok
             return 1;
         fi
 
@@ -170,14 +175,15 @@ print_base() {
 get_column_names() {
     debug "get column names for base $1"
     # TODO Verify existance base $1
-    get_number_columns $BASE_NAME 
-    NUM_COLS_BASE=$RESULT
-    LIST_COLUMN_NAMES=''
-    for ((i=0 ; i < NUM_COLS_BASE; i++)); do
-        get_name_of_column_id $i $BASE_NAME
-        LIST_COLUMN_NAMES="$LIST_COLUMN_NAMES;$RESULT"
+    base_name=$1
+    get_number_columns $base_name 
+    num_cols_base=$result
+    list_column_names=''
+    for ((i=0 ; i < num_cols_base; i++)); do
+        get_name_of_column_id $i $base_name
+        list_column_names="$list_column_names;$result"
     done
-    RESULT=${LIST_COLUMN_NAMES#;} #Remove first ';' that is here because of the first loop
+    result=${list_column_names#;} #Remove first ';' that is here because of the first loop
 }
 
 # To implement
@@ -211,15 +217,19 @@ case "$1" in
     ;;
 "GET_COLS_NAMES")
     get_column_names $2
-    echo $RESULT
+    echo $result
     ;;
 "GET_COLS_NUM")
     get_number_columns $2
-    echo $RESULT
+    echo $result
     ;;
 "GET_LINE_NUM")
     get_number_lines $2
-    echo $RESULT
+    echo $result
+    ;;
+"GET_VALUE")
+    get_value_from_id $2 $3 $4
+    echo $result
     ;;
 "UPDATE_VALUE")
     update_value_in_column $2 $3 $4 $5
