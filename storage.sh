@@ -31,9 +31,15 @@ sanitize_input() {
 # Adds a table given in parameter
 add_table() {
     debug "add table $1"
+    result=$(grep "STARTB=$1;" BASE | wc -c)
+    if (($result > 0)); then
+        echo "ERR: Table $1 exists already"
+        return -1;
+    fi
     sed -i '$ a\STARTB='$1';\nENDB;' BASE;
     return 0
 }
+
 
 # Deletes the table given in parameer
 del_table() {
