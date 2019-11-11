@@ -3,6 +3,12 @@
 # @Date : 08/11/2019
 # @Version : 1.0
 
+# Usage of mutex to prevent the BASE to be accessed several times at once
+if [[ $DATABASH_MUTEX -eq 1 ]];then 
+    echo "ERR: BASE is already being accessed, wait"
+    return -1
+fi
+export DATABASH_MUTEX=1
 
 if [[ ! -e BASE ]]; then
     echo "Base does not exist, write it";
@@ -32,14 +38,13 @@ sanitize_input() {
 add_table() {
     debug "add table $1"
     result=$(grep "STARTB=$1;" BASE | wc -c)
-    if (($result > 0)); then
+    if [[ $result > 0 ]]; then
         echo "ERR: Table $1 exists already"
         return -1;
     fi
     sed -i '$ a\STARTB='$1';\nENDB;' BASE;
     return 0
 }
-
 
 # Deletes the table given in parameer
 del_table() {
@@ -59,12 +64,10 @@ add_column() {
     sed -i '/STARTB='$2';/,/ENDB;/{s/ENDB;/'$1':\nENDB;/g}' BASE
 }
 
-
 # Deletes a column of a table
 del_column() {
     debug "del column $1 to table $2"
     sed -i '/STARTB='$2';/,/ENDB;/{/'$1':/d}' BASE
-
 }
 
 # Returns the number of columns of a table in the result var
@@ -338,3 +341,4 @@ case "$1" in
     ;;
 esac
 
+export DATABASH_MUTEX=0
