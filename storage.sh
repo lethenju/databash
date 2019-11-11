@@ -51,8 +51,14 @@ del_table() {
 # Adds column to table
 add_column() {
     debug "add column $1 to table $2"
+    result=$(sed -n '/STARTB='$2';/,/ENDB;/{/'$1':/p}' BASE | wc -c)
+    if (($result > 0)); then
+        echo "ERR: Column $1 exists already in Table $2"
+        return -1;
+    fi
     sed -i '/STARTB='$2';/,/ENDB;/{s/ENDB;/'$1':\nENDB;/g}' BASE
 }
+
 
 # Deletes a column of a table
 del_column() {
